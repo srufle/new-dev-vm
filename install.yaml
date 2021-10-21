@@ -1,0 +1,47 @@
+---
+  - name: "Playing with Ansible and Git"
+    hosts: localhost
+    connection: local
+    become: yes
+    become_method: sudo    
+
+    tasks:
+
+    - name: "just execute a ls -lrt command"
+      shell: "ls -lrt"
+      register: "output"
+
+    - debug: var=output.stdout_lines
+
+    - name: Install base packages
+      apt:
+        name:  [
+              "aptitude",
+              "apt-transport-https",
+              "ca-certificates",
+              "curl",
+              "wget",
+              "sshpass",
+               "vim", 
+               "git",
+               "bash-completion",
+          ]
+        state: present    
+
+    - name: Install open vm tools packages
+      apt:
+        name:  [
+              "open-vm-tools",
+              "open-vm-tools-desktop",
+              "open-vm-tools-dev",
+          ]
+        state: present  
+
+    - name: Install debs
+      apt:
+        deb: "files/debs/{{ item }}"
+        state: present  
+      with_items: [
+          "gitkraken-amd64.deb",  "google-chrome-stable_current_amd64.deb",  "ms-teams.deb",  "speed-crunch-calc.deb",
+        ]
+        # "vs-code.deb"
