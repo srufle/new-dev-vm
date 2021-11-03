@@ -1,0 +1,11 @@
+---
+- name: change plugin_name to dir 
+  set_fact:
+    plugin_dir: "{{ plugin_name | regex_replace ('@', '-') }}"
+
+- debug:
+    msg: "plugin_dir: {{plugin_dir}}"
+
+# - name: Install vs-extensions 
+#   ansible.builtin.shell: "echo \"code --install-extension {{ plugin_name }}\""
+#   become: no

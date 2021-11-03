@@ -1,5 +1,5 @@
 ---
-  - name: "Playing with Ansible and Git"
+  - name: "Install developer dependencies"
     hosts: localhost
     connection: local
     become: yes
@@ -13,35 +13,72 @@
 
     - debug: var=output.stdout_lines
 
-    - name: Install base packages
-      apt:
-        name:  [
-              "aptitude",
-              "apt-transport-https",
-              "ca-certificates",
-              "curl",
-              "wget",
-              "sshpass",
-               "vim", 
-               "git",
-               "bash-completion",
-          ]
-        state: present    
+    - name: get content of vs-extensions file
+      set_fact:
+        vs_code_extensions: "{{ lookup('file', 'files' + '/' + 'vs-extensions.list') | split('\n') }}"
 
-    - name: Install open vm tools packages
-      apt:
-        name:  [
-              "open-vm-tools",
-              "open-vm-tools-desktop",
-              "open-vm-tools-dev",
-          ]
-        state: present  
+    - debug:
+        msg: "content of local file vs-extensions.list: {{vs_code_extensions}}"
 
-    - name: Install debs
-      apt:
-        deb: "files/debs/{{ item }}"
-        state: present  
-      with_items: [
-          "gitkraken-amd64.deb",  "google-chrome-stable_current_amd64.deb",  "ms-teams.deb",  "speed-crunch-calc.deb",
-        ]
-        # "vs-code.deb"
+    - name: Install vs-extensions 
+      include_role:
+        name: install_vscode_plugin
+      vars:
+        plugin_name: "{{ item }}"
+      with_items: "{{ vs_code_extensions }}"        
+    # - name: Install vs-extensions 
+    #   ansible.builtin.shell: "code --install-extension {{ item }}"
+    #   with_items: "{{ vs_code_extensions }}"
+    #   become: no  
+    # - name: Install base packages
+    #   apt:
+    #     name:  [
+    #         "aptitude",
+    #         "apt-transport-https",
+    #         "ca-certificates",
+    #         "curl",
+    #         "wget",
+    #         "nmap",
+    #         "tcpdump",
+    #         "sshpass",
+    #         "vim", 
+    #         "git",
+    #         "bash-completion",
+    #         "unzip",
+    #         "zip",
+    #         "dos2unix",
+    #         "kdiff3",
+    #         "filezilla",
+            # "shellcheck",
+    #       ]
+    #     state: present    
+
+    # - name: Install open vm tools packages
+    #   apt:
+    #     name:  [
+    #           "open-vm-tools",
+    #           "open-vm-tools-desktop",
+    #           "open-vm-tools-dev",
+    #       ]
+    #     state: present  
+
+    # - name: Install openssh packages
+    #   apt:
+    #     name:  [
+    #           "openssh-server",
+    #       ]
+    #     state: present  
+
+    # - name: Install debs
+    #   apt:
+    #     deb: "files/debs/{{ item }}"
+    #     state: present  
+    #   with_items: [
+    #       "gitkraken-amd64.deb",  "google-chrome-stable_current_amd64.deb",  "ms-teams.deb",  "speed-crunch-calc.deb",
+    #     ]
+    #     # "vs-code.deb"
+
+    #     # make .ssh dir
+    #     # copy my ssh files to dir
+    #     # make .aws dir
+    #     # copy aws info

@@ -25,5 +25,7 @@ sudo apt-get install open-vm-tools open-vm-tools-desktop open-vm-tools-dev  -y
 sudo apt-get install xrdp -y
 sudo systemctl enable --now xrdp
 
+sudo  apt-get install restic
+restic self-update
 # ansible-vault - look in lastpass for password
 # /tmp/vault.pass
